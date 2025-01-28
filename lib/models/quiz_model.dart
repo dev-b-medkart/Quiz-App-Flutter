@@ -6,4 +6,9 @@ class Quiz {
     required this.title,
     required this.questions,
   });
+  @override
+  String toString() {
+    return 'Quiz Title: $title\nQuestions:\n${questions.map((q) => q.toString()).join('\n')}';
+  }
+
 }

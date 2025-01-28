@@ -7,4 +7,8 @@ class Question {
     required this.options,
     required this.correctOptionIndex,
   });
+  @override
+  String toString() {
+    return 'Question: $text\nOptions: $options\nCorrect Option: ${options[correctOptionIndex]}';
+  }
 }
