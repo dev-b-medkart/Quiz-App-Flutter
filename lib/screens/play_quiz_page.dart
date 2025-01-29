@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_app/models/quiz_model.dart';
 class PlayQuizPage extends StatefulWidget {
-  const PlayQuizPage({super.key});
+  const PlayQuizPage({super.key, required Quiz quiz});
 
   @override
   State<PlayQuizPage> createState() => _PlayQuizPageState();

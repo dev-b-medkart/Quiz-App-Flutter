@@ -1,9 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:quiz_app/screens/home_page.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import './services/hive_service.dart';
+import './models/question_model.dart';
+import 'models/quiz_model.dart';
 
-void main(){
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Hive using hive_flutter
+  await Hive.initFlutter();
+
+  // Register Hive Adapters
+  Hive.registerAdapter(QuestionAdapter());
+  Hive.registerAdapter(QuizAdapter());
+
+  // Initialize HiveService
+  await HiveService.init();
+
+  runApp(MyApp());
 }
+// void main(){
+//   runApp(const MyApp());
+// }
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
