@@ -26,7 +26,7 @@ class _QuestionFormPageState extends State<QuestionFormPage> {
     _pageController = PageController();
     _questions = List.generate(
       widget.numQuestions,
-          (index) => Question(
+      (index) => Question(
         text: '',
         options: ['', '', '', ''],
         correctOptionIndex: -1,
@@ -35,7 +35,6 @@ class _QuestionFormPageState extends State<QuestionFormPage> {
   }
 
   void _saveQuestion(
-
       int index, String text, List<String> options, int correctOptionIndex) {
     setState(() {
       print("object $text");
@@ -91,14 +90,13 @@ class _QuestionFormPageState extends State<QuestionFormPage> {
         },
       ),
       floatingActionButton: (_pageController.hasClients &&
-          _pageController.page == widget.numQuestions - 1)
+              _pageController.page == widget.numQuestions - 1)
           ? FloatingActionButton(
-        onPressed: _submitQuiz,
-        tooltip: 'Submit Quiz',
-        child: const Icon(Icons.check),
-      )
+              onPressed: _submitQuiz,
+              tooltip: 'Submit Quiz',
+              child: const Icon(Icons.check),
+            )
           : null,
-
     );
   }
 }
@@ -128,9 +126,11 @@ class _QuestionFormState extends State<QuestionForm> {
   void initState() {
     super.initState();
     _questionController = TextEditingController(text: widget.question.text);
-    _optionControllers =
-        List.generate(4, (index) => TextEditingController(text: widget.question.options[index]));
-    _selectedOptionIndex = widget.question.correctOptionIndex == -1 ? null : widget.question.correctOptionIndex;
+    _optionControllers = List.generate(4,
+        (index) => TextEditingController(text: widget.question.options[index]));
+    _selectedOptionIndex = widget.question.correctOptionIndex == -1
+        ? null
+        : widget.question.correctOptionIndex;
   }
 
   @override
@@ -142,12 +142,20 @@ class _QuestionFormState extends State<QuestionForm> {
     super.dispose();
   }
 
+  // void _onSave() {
+  //   widget.onSave(
+  //     widget.questionIndex,
+  //     _questionController.text,
+  //     _optionControllers.map((controller) => controller.text).toList(),
+  //     _selectedOptionIndex!,
+  //   );
+  // }
   void _onSave() {
     widget.onSave(
       widget.questionIndex,
       _questionController.text,
       _optionControllers.map((controller) => controller.text).toList(),
-      _selectedOptionIndex!,
+      _selectedOptionIndex ?? -1, // ✅ Use -1 as a fallback
     );
   }
 
@@ -167,7 +175,8 @@ class _QuestionFormState extends State<QuestionForm> {
           ...List.generate(4, (index) {
             return TextField(
               controller: _optionControllers[index],
-              decoration: InputDecoration(labelText: 'Option ${String.fromCharCode(65 + index)}'),
+              decoration: InputDecoration(
+                  labelText: 'Option ${String.fromCharCode(65 + index)}'),
               onChanged: (_) => _onSave(),
             );
           }),
@@ -192,5 +201,3 @@ class _QuestionFormState extends State<QuestionForm> {
     );
   }
 }
-
-
