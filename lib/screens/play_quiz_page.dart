@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:quiz_app/models/quiz_model.dart';
 
+
+
+
+
+
+
 class PlayQuizPage extends StatefulWidget {
   final Quiz quiz;
   const PlayQuizPage({super.key, required this.quiz});
@@ -12,6 +18,15 @@ class PlayQuizPage extends StatefulWidget {
 PageController _pageController = PageController();
 
 class _PlayQuizPageState extends State<PlayQuizPage> {
+
+  late List<int> userAnswers; // Declare without initializing
+
+  @override
+  void initState() {
+    super.initState(); // Call parent initState()
+    userAnswers = List.filled(widget.quiz.questions.length, -1); // ✅ Correct: Assign value to instance variable
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,7 +73,7 @@ class _QuestionCardState extends State<QuestionCard> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            'Question ${widget.questionIndex}',
+            'Question ${widget.questionIndex+1}',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
           ),
         ),
@@ -73,10 +88,13 @@ class _QuestionCardState extends State<QuestionCard> {
           children: widget.options.map((option) {
             return Padding(
               padding: const EdgeInsets.all(12.0),
-              child: TextButton(
+              child: OutlinedButton(
+                onPressed: () {
+                  setState(() {
+                    userAnswers
+                  });
+                },
                 child: Text(option),
-                onPressed: () {},
-                style: ButtonStyle(backgroundColor: C),
               ),
             );
           }).toList(),
