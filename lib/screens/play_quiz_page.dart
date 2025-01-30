@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quiz_app/models/quiz_model.dart';
 
-
-
-
-
-
-
 class PlayQuizPage extends StatefulWidget {
   final Quiz quiz;
   const PlayQuizPage({super.key, required this.quiz});
@@ -18,13 +12,19 @@ class PlayQuizPage extends StatefulWidget {
 PageController _pageController = PageController();
 
 class _PlayQuizPageState extends State<PlayQuizPage> {
-
   late List<int> userAnswers; // Declare without initializing
 
   @override
   void initState() {
     super.initState(); // Call parent initState()
-    userAnswers = List.filled(widget.quiz.questions.length, -1); // ✅ Correct: Assign value to instance variable
+    userAnswers = List.filled(widget.quiz.questions.length,
+        -1); // ✅ Correct: Assign value to instance variable
+  }
+
+  void onAnswer(int questionIndex, int option) {
+    setState(() {
+      userAnswers[questionIndex] = option;
+    });
   }
 
   @override
@@ -45,7 +45,9 @@ class _PlayQuizPageState extends State<PlayQuizPage> {
             return QuestionCard(
                 questionIndex: index,
                 question: widget.quiz.questions[index].text,
-                options: widget.quiz.questions[index].options);
+                options: widget.quiz.questions[index].options,
+                onAnswer: onAnswer,
+                selectedOption: userAnswers[index]);
           },
         ));
   }
@@ -55,11 +57,15 @@ class QuestionCard extends StatefulWidget {
   final int questionIndex;
   final String question;
   final List<String> options;
+  final void Function(int questionIndex, int option) onAnswer;
+  final int selectedOption;
   const QuestionCard(
       {super.key,
       required this.questionIndex,
       required this.question,
-      required this.options});
+      required this.options,
+      required this.onAnswer,
+      required this.selectedOption});
 
   @override
   State<QuestionCard> createState() => _QuestionCardState();
@@ -73,7 +79,7 @@ class _QuestionCardState extends State<QuestionCard> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
-            'Question ${widget.questionIndex+1}',
+            'Question ${widget.questionIndex + 1}',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 26),
           ),
         ),
@@ -85,20 +91,32 @@ class _QuestionCardState extends State<QuestionCard> {
           ),
         ),
         Column(
-          children: widget.options.map((option) {
+          children: widget.options.asMap().entries.map((entry) {
             return Padding(
               padding: const EdgeInsets.all(12.0),
               child: OutlinedButton(
                 onPressed: () {
-                  setState(() {
-                    userAnswers
-                  });
+                  widget.onAnswer(
+                    widget.questionIndex,entry.key
+                  );
+                  print('option ${widget.selectedOption}');
+
                 },
-                child: Text(option),
+                style: OutlinedButton.styleFrom(
+                  backgroundColor: widget.selectedOption==entry.key? Colors.blue:Colors.red[400],  // ✅ Background color
+                  foregroundColor: Colors.white, // ✅ Text color
+                  side: BorderSide(color: Colors.black, width: 1), // ✅ Border color
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), // ✅ Padding
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // ✅ Rounded corners
+
+                ),
+
+                child: Text(entry.value),
               ),
             );
           }).toList(),
-        )
+        ),
+
       ],
     );
   }

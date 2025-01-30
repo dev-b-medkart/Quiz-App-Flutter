@@ -71,6 +71,7 @@ class _QuestionFormPageState extends State<QuestionFormPage> {
     }
   }
 
+  ValueNotifier<int> currentPage = ValueNotifier(0);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,6 +81,10 @@ class _QuestionFormPageState extends State<QuestionFormPage> {
       ),
       body: PageView.builder(
         controller: _pageController,
+        onPageChanged: (value) {
+          currentPage.value=value;
+          // print(value);
+        },
         itemCount: widget.numQuestions,
         itemBuilder: (context, index) {
           return QuestionForm(
@@ -89,14 +94,27 @@ class _QuestionFormPageState extends State<QuestionFormPage> {
           );
         },
       ),
-      floatingActionButton: (_pageController.hasClients &&
-              _pageController.page == widget.numQuestions - 1)
-          ? FloatingActionButton(
+      floatingActionButton: ValueListenableBuilder(
+        valueListenable: currentPage,
+        builder: (context, value, child) {
+          if (value == widget.numQuestions - 1) {
+            return FloatingActionButton(
               onPressed: _submitQuiz,
               tooltip: 'Submit Quiz',
               child: const Icon(Icons.check),
-            )
-          : null,
+            );
+          } else {
+            return SizedBox();
+          }
+        },
+      ),
+      // floatingActionButton: (_pageController.page == widget.numQuestions - 1)
+      //     ? FloatingActionButton(
+      //         onPressed: _submitQuiz,
+      //         tooltip: 'Submit Quiz',
+      //         child: const Icon(Icons.check),
+      //       )
+      //     : null,
     );
   }
 }
