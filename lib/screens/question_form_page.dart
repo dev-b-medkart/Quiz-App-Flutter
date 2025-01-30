@@ -83,7 +83,6 @@ class _QuestionFormPageState extends State<QuestionFormPage> {
         controller: _pageController,
         onPageChanged: (value) {
           currentPage.value=value;
-          // print(value);
         },
         itemCount: widget.numQuestions,
         itemBuilder: (context, index) {

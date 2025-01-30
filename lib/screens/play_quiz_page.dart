@@ -49,7 +49,11 @@ class _PlayQuizPageState extends State<PlayQuizPage> {
                 onAnswer: onAnswer,
                 selectedOption: userAnswers[index]);
           },
-        ));
+        ),
+      //  ElevatedButton(onPressed: () {
+      //
+      // }, child: Text('Submit Quiz',style: TextStyle(fontWeight: FontWeight.w500),)),
+    );
   }
 }
 
