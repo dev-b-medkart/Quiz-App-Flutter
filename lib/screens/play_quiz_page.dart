@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quiz_app/models/quiz_model.dart';
+import 'package:quiz_app/screens/quiz_result.dart';
 
 class PlayQuizPage extends StatefulWidget {
   final Quiz quiz;
@@ -27,32 +28,57 @@ class _PlayQuizPageState extends State<PlayQuizPage> {
     });
   }
 
+  ValueNotifier<int> currentPage = ValueNotifier(0);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Quiz:  ${widget.quiz.title}',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          centerTitle: true,
-          backgroundColor: Colors.green[300],
+      appBar: AppBar(
+        title: Text(
+          'Quiz:  ${widget.quiz.title}',
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        body: PageView.builder(
-          scrollDirection: Axis.vertical,
-          itemCount: widget.quiz.questions.length,
-          itemBuilder: (context, index) {
-            return QuestionCard(
-                questionIndex: index,
-                question: widget.quiz.questions[index].text,
-                options: widget.quiz.questions[index].options,
-                onAnswer: onAnswer,
-                selectedOption: userAnswers[index]);
-          },
-        ),
-      //  ElevatedButton(onPressed: () {
-      //
-      // }, child: Text('Submit Quiz',style: TextStyle(fontWeight: FontWeight.w500),)),
+        centerTitle: true,
+        backgroundColor: Colors.green[300],
+      ),
+      body: PageView.builder(
+        scrollDirection: Axis.vertical,
+        itemCount: widget.quiz.questions.length,
+        onPageChanged: (value) {
+          currentPage.value = value;
+        },
+        itemBuilder: (context, index) {
+          return QuestionCard(
+              questionIndex: index,
+              question: widget.quiz.questions[index].text,
+              options: widget.quiz.questions[index].options,
+              onAnswer: onAnswer,
+              selectedOption: userAnswers[index]);
+        },
+      ),
+      floatingActionButton: ValueListenableBuilder(
+        valueListenable: currentPage,
+        builder: (context, value, child) {
+          print('value $value');
+          print('value ${widget.quiz.questions.length - 1}');
+          if (value == widget.quiz.questions.length - 1) {
+            return FloatingActionButton.extended(
+              onPressed: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (context) => QuizResult(
+                            quiz: widget.quiz, userAnswers: userAnswers)),
+                    (route) => false);
+              },
+              label: Text('Submit Quiz',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+              icon: Icon(Icons.check),
+            );
+          } else {
+            return SizedBox();
+          }
+        },
+      ),
     );
   }
 }
@@ -100,27 +126,27 @@ class _QuestionCardState extends State<QuestionCard> {
               padding: const EdgeInsets.all(12.0),
               child: OutlinedButton(
                 onPressed: () {
-                  widget.onAnswer(
-                    widget.questionIndex,entry.key
-                  );
+                  widget.onAnswer(widget.questionIndex, entry.key);
                   print('option ${widget.selectedOption}');
-
                 },
                 style: OutlinedButton.styleFrom(
-                  backgroundColor: widget.selectedOption==entry.key? Colors.blue:Colors.red[400],  // ✅ Background color
+                  backgroundColor: widget.selectedOption == entry.key
+                      ? Colors.blue
+                      : Colors.red[400], // ✅ Background color
                   foregroundColor: Colors.white, // ✅ Text color
-                  side: BorderSide(color: Colors.black, width: 1), // ✅ Border color
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24), // ✅ Padding
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)), // ✅ Rounded corners
-
+                  side: BorderSide(
+                      color: Colors.black, width: 1), // ✅ Border color
+                  padding: EdgeInsets.symmetric(
+                      vertical: 12, horizontal: 24), // ✅ Padding
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(10)), // ✅ Rounded corners
                 ),
-
                 child: Text(entry.value),
               ),
             );
           }).toList(),
         ),
-
       ],
     );
   }
